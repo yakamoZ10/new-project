@@ -37,18 +37,13 @@ resource "aws_ecs_task_definition" "demo" {
 
   container_definitions = jsonencode([{
     name      = "nana-app"
-    image     = image = "${aws_ecr_repository.demo.repository_url}:${var.image_tag}"
-
+    image     = "${aws_ecr_repository.demo.repository_url}:latest"
     essential = true
     portMappings = [{
       containerPort = 3000
       hostPort      = 3000
     }]
   }])
-  lifecycle {
-  create_before_destroy = true
-}
-
 }
 
 # ECS Service
@@ -62,5 +57,6 @@ resource "aws_ecs_service" "demo" {
   network_configuration {
     subnets         = [aws_subnet.public_a.id, aws_subnet.public_b.id]
     assign_public_ip = true
+    security_groups = [aws_security_group.ecs_service.id]
   }
 }
