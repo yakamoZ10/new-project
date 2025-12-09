@@ -1,0 +1,56 @@
+# -------------------------
+# Node.js
+# -------------------------
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+
+# Environment files
+.env
+.env.*
+
+# Logs
+logs/
+*.log
+
+# -------------------------
+# Docker
+# -------------------------
+*.tar
+docker-compose.override.yml
+
+# -------------------------
+# Terraform
+# -------------------------
+terraform.tfstate
+terraform.tfstate.*
+*.tfvars
+*.tfvars.json
+.terraform/
+.terraform.lock.hcl
+crash.log
+
+# Ignore variable files with secrets
+secret.tfvars
+
+# -------------------------
+# Python (if needed)
+# -------------------------
+__pycache__/
+*.pyc
+
+# -------------------------
+# OS / Editor junk
+# -------------------------
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# -------------------------
+# AWS
+# -------------------------
+*.pem
+.aws/

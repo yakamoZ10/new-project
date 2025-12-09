@@ -1,0 +1,54 @@
+name: Deploy to ECS with OIDC
+
+on:
+  push:
+    branches: ["main"]
+
+permissions:
+  id-token: write        # required for OIDC
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/github-ecs-deploy-role
+          aws-region: eu-central-1
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build, Tag & Push Docker Image
+        env:
+          ECR_REPO: ardin-ecs-demo
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+          AWS_REGION: eu-central-1
+        run: |
+          IMAGE_TAG=$(date +%s)
+
+          echo "Building Docker image..."
+          docker build -t $ECR_REPO:$IMAGE_TAG ./app
+
+          echo "Tagging image..."
+          docker tag $ECR_REPO:$IMAGE_TAG \
+            $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO:$IMAGE_TAG
+
+          echo "Pushing image to ECR..."
+          docker push \
+            $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO:$IMAGE_TAG
+
+      - name: Force new ECS deployment
+        run: |
+          aws ecs update-service \
+            --cluster ardin-ecs-cluster \
+            --service nana-ecs-service \
+            --force-new-deployment
+
+            
