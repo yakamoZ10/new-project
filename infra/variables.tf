@@ -30,3 +30,8 @@ variable "backend_bucket" {
 variable "backend_lock_table" {
   type = string
 }
+
+variable "image_tag" {
+  type = string
+  default = "manual"
+}

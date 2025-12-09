@@ -37,13 +37,18 @@ resource "aws_ecs_task_definition" "demo" {
 
   container_definitions = jsonencode([{
     name      = "nana-app"
-    image     = "${aws_ecr_repository.demo.repository_url}:latest"
+    image     = image = "${aws_ecr_repository.demo.repository_url}:${var.image_tag}"
+
     essential = true
     portMappings = [{
       containerPort = 3000
       hostPort      = 3000
     }]
   }])
+  lifecycle {
+  create_before_destroy = true
+}
+
 }
 
 # ECS Service
