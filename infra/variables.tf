@@ -13,9 +13,6 @@ variable "memory" {
   default = 512
 }
 
-variable "subnets" {
-  type = list(string)
-}
 variable "account_id" {
   type = string
 }
